@@ -1,12 +1,42 @@
 --[[
 	This is rather expensive to run,
 	I do NOT recommend using this if you are at all concerned with performance.
-	Maybe one day I might parallelize it, but for now this works.
-	
-	Recreation of the first version which I made for personal use.
-	V2 fixes alot of problems with the first iteration of this module; mainly related to how I handled absorption.
+	Maybe one day I might parallelize it, but for now, this works.
+
+	Please be aware today that this update HEAVLIY focuses on math so just download this file and go on with your merry way. But honestly please check the code to see if it fits your needs.
+
+	A lot of you folks asked a whole bunch of questions; I'll answer them here in this list:
+	(The questions are from the Google Form results) 
+
+	Q: Do you work alone? A: Yes.
+
+	Q: How do I start coding A: Don't be asking me how to start. If you're passionate about coding then just search up YT tutorials. otherwise don't try to code because it's popular.
+
+	Q: Can I work with you? A: Not directly, the code is open-source which you can edit to fit whatever scenario.
+
+	Q: serugjgni5b4tu54 A: Yes?
+
+	Q: How do I contact you? A: If you have Discord you can get in touch with me. My name is Purpledudewithagolfcap
+
+	Q: bloxwitch A: Garry's Mod reference?
+
+	Q: How long will you update this for? A: Not determined. Maybe if I get tired or burned out it might stop but for right now I don't have a plan on stopping.
+
+	Q: [REDACTED BECAUSE IT IS A BUNCH OF SLURS] A: Why thank you for those nice words.
+
+	Q: If anyone stole this code or didn't credit you will you do anything about it? A: No, I can't do much in terms of legal action. But I can criticize them to hell.
+
+	Q: release every single project you have i know you have a car engine in the work and like this gun engine thing too so please release them to me or the public. Otherwise ill copy your game and get it myself A: Fuck no. I'm not going to release something in WIP. The car engine may be finished but I'm not going to leak this project to you or anyone because they said so. Fucking Leeches.
+
+	Q: (@)JE#J)#F A: no
+
+	Q:  A: How did you submit nothing?
+
+	V2 fixes a lot of problems with the first iteration of this module; mainly related to how I handled absorption.
+	Now for V2/5 it mostly improves on the math behind the reflection system. I focused hard on the reflection because of how important it is.
+	If you do not like this update please give me a notice or just rewrite the function to be what you intend.
 	You are free to use this as you wish, and please notify me if you find any bugs.
-	Credit is not required but definitely appriciated!
+	Credit is not required but appreciated!
 	
 	---Quick Start Guide---
 		1. Require the module (duh). Make sure you do this on the client, as it doesn't make much sense to have the server calculate the reverb (also it doesn't work serverside anyways).
@@ -34,7 +64,7 @@
 	---------------------------------------
 	[Functions]
 	
-	Note: You don't have to fill out every single argument, there are defaults that usually work well enough (except for PositionOrPart, which will default to [0,0,0]).
+	Note: You don't have to fill out every single argument, some defaults usually work well enough (except for PositionOrPart, which will default to [0,0,0]).
 	# SoundReverbV2.newRayParams( 
 		PositionOrPart: Vector3 | BasePart, -- Where to shoot rays from, if you supply a part then that part will be automatically tracked, if a Vector3 then you will have to update it yourself with ReverbObject:UpdatePosition()
 		MaxReflections: number, -- How many reflections can occur.
@@ -46,11 +76,11 @@
 			returns rayParams
 
 
-	Note: You don't have to fill out every single argument, there are defaults that usually work well enough.
+	Note: You don't have to fill out every single argument, some defaults usually work well enough.
 	# SoundReverbV2.newSoundParams(
 		LerpTime: number, -- How long the lerp between one value to another is (i.e. Going from 1->0 with a LerpTime of 2 would take 2 seconds)
 		GroupVolume: number, -- Volume of the sound group; mostly useless, just modify the sound itself.
-		Do3DMuffle: boolean, -- Whether or not to muffle sounds behind walls/where the camera cant see them.
+		Do3DMuffle: boolean, -- Whether or not to muffle sounds behind walls/where the camera can't see them.
 	)
 			returns soundParams
 	
@@ -72,7 +102,7 @@
 	
 	# ReverbObject:StartUpdate() -- Starts firing rays,
 	
-	# ReverbObject:StopUpdate() -- Stops firing rays, keeps the same reverb values.
+	# ReverbObject:StopUpdate() -- Stops firing rays, and keeps the same reverb values.
 	
 	Note: Only use this if you didn't supply a part in the rayParams.
 	# ReverbObject:UpdatePosition(
@@ -84,11 +114,11 @@
 	)
 	
 	# ReverbObject:UpdateRayParams(
-		RayParams: rayParams -- self explanatory
+		RayParams: rayParams -- self-explanatory
 	)
 	
 	# ReverbObject:UpdateRayParams(
-		SoundParams: soundParams -- self explanatory
+		SoundParams: soundParams -- self-explanatory
 	)
 	
 	# ReverbObject:SetReferenceCamera(
@@ -104,13 +134,13 @@
 	> SoundReverbV2.MaterialReflectiveness: {["Material"]: number} -- Table of materials that dictates how reflective things are, changes WetLevel, RayBounces, and Diffusion.
 	
 	> ReverbObject.FilterDescendantsInstances: {any} -- Equivalent to RaycastParams.FilterDescendantsInstances
-	> ReverbObject.LatestResult: {EqualizerSoundEffect: {any}, ReverbSoundEffect: {any}} -- Table of calculated properties for the sound effects, updates on heartbeat.
-	> ReverbObject.LastPerformanceTick: number -- How long (in ms) it took to do everything, updates on heartbeat.
+	> ReverbObject.LatestResult: {EqualizerSoundEffect: {any}, ReverbSoundEffect: {any}} -- Table of calculated properties for the sound effects, updates on a heartbeat.
+	> ReverbObject.LastPerformanceTick: number -- How long (in ms) it took to do everything, updates on a heartbeat.
 	> ReverbObject.AutoApplyList: {Sound} -- Table of sounds to apply reverb to.
 	> ReverbObject.StepComplete: RBXScriptSignal -- Signal that you can connect to, fires every heartbeat AFTER everything has been applied.
 ]]
 
-local VersionNumber = 2
+local VersionNumber = 2.5
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local CastVisuals = require(script.CastVisuals)
@@ -295,6 +325,11 @@ function ReverbObject:_UpdateStep()
 		local Direction = self._RandomSeed:NextUnitVector()
 		return Direction
 	end
+-- This took fucking months to figure out. Why did I go through the effort of making the Reflect() super accurate? because I was designing the engine for a game. The main-
+-- -purpose of the game was to avoid some monster that can hear things and such. While it may not be optimal for performance, it is more accurate than any other sound tracing system out there.
+-- But yeah you can rewrite this function to fit whatever needs you have. But just know how much pain and sweat I put into this single line. While it sounds painful it did teach me more about-
+-- -how Lua or just ROBLOX in general handles math and such. It's pretty decent for normal uses until we get shit like this. Now I did a shit ton of searching to figure out this mess. I've only just now started high school.
+	
 	local function Reflect(direction, normal)
 		-- Ultra-high precision arithmetic helper functions
 		local function arbitraryPrecisionAdd(a, b, precision)
