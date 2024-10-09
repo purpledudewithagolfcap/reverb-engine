@@ -1,45 +1,15 @@
 --[[
 	This is rather expensive to run,
 	I do NOT recommend using this if you are at all concerned with performance.
-	Maybe one day I might parallelize it, but for now, this works.
-
-	Please be aware today that this update HEAVLIY focuses on math so just download this file and go on with your merry way. But honestly please check the code to see if it fits your needs.
-
-	A lot of you folks asked a whole bunch of questions; I'll answer them here in this list:
-	(The questions are from the Google Form results) 
-
-	Q: Do you work alone? A: Yes.
-
-	Q: How do I start coding A: Don't be asking me how to start. If you're passionate about coding then just search up YT tutorials. otherwise don't try to code because it's popular.
-
-	Q: Can I work with you? A: Not directly, the code is open-source which you can edit to fit whatever scenario.
-
-	Q: serugjgni5b4tu54 A: Yes?
-
-	Q: How do I contact you? A: If you have Discord you can get in touch with me. My name is Purpledudewithagolfcap
-
-	Q: bloxwitch A: Garry's Mod reference?
-
-	Q: How long will you update this for? A: Not determined. Maybe if I get tired or burned out it might stop but for right now I don't have a plan on stopping.
-
-	Q: [REDACTED BECAUSE IT IS A BUNCH OF SLURS] A: Why thank you for those nice words.
-
-	Q: If anyone stole this code or didn't credit you will you do anything about it? A: No, I can't do much in terms of legal action. But I can criticize them to hell.
-
-	Q: release every single project you have i know you have a car engine in the work and like this gun engine thing too so please release them to me or the public. Otherwise ill copy your game and get it myself A: Fuck no. I'm not going to release something in WIP. The car engine may be finished but I'm not going to leak this project to you or anyone because they said so. Fucking Leeches.
-
-	Q: (@)JE#J)#F A: no
-
-	Q:  A: How did you submit nothing?
-
-	V2 fixes a lot of problems with the first iteration of this module; mainly related to how I handled absorption.
-	Now for V2/5 it mostly improves on the math behind the reflection system. I focused hard on the reflection because of how important it is.
-	If you do not like this update please give me a notice or just rewrite the function to be what you intend.
+	Maybe one day I might parallelize it, but for now this works.
+	
+	Recreation of the first version which I made for personal use.
+	V2 fixes alot of problems with the first iteration of this module; mainly related to how I handled absorption.
 	You are free to use this as you wish, and please notify me if you find any bugs.
-	Credit is not required but appreciated!
+	Credit is not required but definitely appriciated!
 	
 	---Quick Start Guide---
-		1. Require the module (duh). Make sure you do this on the client, as it doesn't make much sense to have the server calculate the reverb (also it doesn't work serverside anyways).
+		1. Require the module (duh). Make sure you do this on the client, as it doesn't make much sense to have the server calculate the reverb (alsao it doesn't work serverside anyways).
 		2. Create rayParams with SoundReverbV2.newRayParams() to specify where to shoot rays from, how many rays, etc.
 		3. Make a new ReverbObject with SoundReverbV2.new(RayParams: rayParams?, SoundParams: soundParams?), and you can pass your params through with it.
 		4. Add your sound(s) with ReverbObject:AddSound(MySound)
@@ -64,7 +34,7 @@
 	---------------------------------------
 	[Functions]
 	
-	Note: You don't have to fill out every single argument, some defaults usually work well enough (except for PositionOrPart, which will default to [0,0,0]).
+	Note: You don't have to fill out every single argument, there are defaults that usually work well enough (except for PositionOrPart, which will default to [0,0,0]).
 	# SoundReverbV2.newRayParams( 
 		PositionOrPart: Vector3 | BasePart, -- Where to shoot rays from, if you supply a part then that part will be automatically tracked, if a Vector3 then you will have to update it yourself with ReverbObject:UpdatePosition()
 		MaxReflections: number, -- How many reflections can occur.
@@ -76,11 +46,11 @@
 			returns rayParams
 
 
-	Note: You don't have to fill out every single argument, some defaults usually work well enough.
+	Note: You don't have to fill out every single argument, there are defaults that usually work well enough.
 	# SoundReverbV2.newSoundParams(
 		LerpTime: number, -- How long the lerp between one value to another is (i.e. Going from 1->0 with a LerpTime of 2 would take 2 seconds)
 		GroupVolume: number, -- Volume of the sound group; mostly useless, just modify the sound itself.
-		Do3DMuffle: boolean, -- Whether or not to muffle sounds behind walls/where the camera can't see them.
+		Do3DMuffle: boolean, -- Whether or not to muffle sounds behind walls/where the camera cant see them.
 	)
 			returns soundParams
 	
@@ -102,7 +72,7 @@
 	
 	# ReverbObject:StartUpdate() -- Starts firing rays,
 	
-	# ReverbObject:StopUpdate() -- Stops firing rays, and keeps the same reverb values.
+	# ReverbObject:StopUpdate() -- Stops firing rays, keeps the same reverb values.
 	
 	Note: Only use this if you didn't supply a part in the rayParams.
 	# ReverbObject:UpdatePosition(
@@ -114,11 +84,11 @@
 	)
 	
 	# ReverbObject:UpdateRayParams(
-		RayParams: rayParams -- self-explanatory
+		RayParams: rayParams -- self explanatory
 	)
 	
 	# ReverbObject:UpdateRayParams(
-		SoundParams: soundParams -- self-explanatory
+		SoundParams: soundParams -- self explanatory
 	)
 	
 	# ReverbObject:SetReferenceCamera(
@@ -134,13 +104,13 @@
 	> SoundReverbV2.MaterialReflectiveness: {["Material"]: number} -- Table of materials that dictates how reflective things are, changes WetLevel, RayBounces, and Diffusion.
 	
 	> ReverbObject.FilterDescendantsInstances: {any} -- Equivalent to RaycastParams.FilterDescendantsInstances
-	> ReverbObject.LatestResult: {EqualizerSoundEffect: {any}, ReverbSoundEffect: {any}} -- Table of calculated properties for the sound effects, updates on a heartbeat.
-	> ReverbObject.LastPerformanceTick: number -- How long (in ms) it took to do everything, updates on a heartbeat.
+	> ReverbObject.LatestResult: {EqualizerSoundEffect: {any}, ReverbSoundEffect: {any}} -- Table of calculated properties for the sound effects, updates on heartbeat.
+	> ReverbObject.LastPerformanceTick: number -- How long (in ms) it took to do everything, updates on heartbeat.
 	> ReverbObject.AutoApplyList: {Sound} -- Table of sounds to apply reverb to.
 	> ReverbObject.StepComplete: RBXScriptSignal -- Signal that you can connect to, fires every heartbeat AFTER everything has been applied.
 ]]
 
-local VersionNumber = 2.5
+local VersionNumber = 2
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local CastVisuals = require(script.CastVisuals)
@@ -296,19 +266,36 @@ function ReverbObject:_UpdateStep()
 
 	local function _3DSound()
 		local _, Listener = SoundService:GetListener()
+		local ListenerPosition
 		if Listener then
 			if Listener:IsA("BasePart") then
-				Listener = Listener.CFrame
+				ListenerPosition = Listener.Position
+			else
+				ListenerPosition = Listener.Position
 			end
 		else
-			Listener = self._ReferenceCamera.CFrame
+			ListenerPosition = self._ReferenceCamera.CFrame.Position
 		end
-		local Facing = Listener.LookVector
-		local Vector = (self._EmitPosition - Listener.Position).unit
-		Facing = Vector3.new(Facing.X,0,Facing.Z)
-		Vector = Vector3.new(Vector.X,0,Vector.Z)
-		local Angle = math.acos(Facing:Dot(Vector)/(Facing.magnitude*Vector.magnitude))
-		return -(10 * ((Angle/math.pi)^2))
+
+		local Direction = (self._EmitPosition - ListenerPosition).Unit
+		local Distance = (self._EmitPosition - ListenerPosition).Magnitude
+
+		-- Perform a raycast from the listener to the sound source
+		local RaycastParam = RaycastParams.new()
+		RaycastParam.FilterType = Enum.RaycastFilterType.Exclude
+		RaycastParam.FilterDescendantsInstances = self.FilterDescendantsInstances
+
+		local Raycast = workspace:Raycast(ListenerPosition, Direction * Distance, RaycastParam)
+
+		if Raycast then
+			-- If there's an obstruction, calculate the occlusion factor
+			local ObstructionDistance = (Raycast.Position - ListenerPosition).Magnitude
+			local OcclusionFactor = ObstructionDistance / Distance
+			return -10 * OcclusionFactor
+		else
+			-- If there's no obstruction, return 0 (no muffling)
+			return 0
+		end
 	end
 
 	local function GetMaterialStat(MaterialName: string)
@@ -325,11 +312,6 @@ function ReverbObject:_UpdateStep()
 		local Direction = self._RandomSeed:NextUnitVector()
 		return Direction
 	end
--- This took fucking months to figure out. Why did I go through the effort of making the Reflect() super accurate? because I was designing the engine for a game. The main-
--- -purpose of the game was to avoid some monster that can hear things and such. While it may not be optimal for performance, it is more accurate than any other sound tracing system out there.
--- But yeah you can rewrite this function to fit whatever needs you have. But just know how much pain and sweat I put into this single line. While it sounds painful it did teach me more about-
--- -how Lua or just ROBLOX in general handles math and such. It's pretty decent for normal uses until we get shit like this. Now I did a shit ton of searching to figure out this mess. I've only just now started high school.
-	
 	local function Reflect(direction, normal)
 		-- Ultra-high precision arithmetic helper functions
 		local function arbitraryPrecisionAdd(a, b, precision)
@@ -626,7 +608,7 @@ function ReverbObject:_UpdateStep()
 			RaySample.TotalDistance += Raycast.Distance
 			if AbsorptionChance > self._RandomSeed:NextNumber() then
 				if self._RayParams.DebugMode then
-					self:_CreateRayVisual(Origin, Direction, Raycast.Distance, Color3.new(0.5,0,1), 0)
+					self:_CreateRayVisual(Origin, Direction, Raycast.Distance, Color3.new(0.635294, 0, 1), 0)
 				end
 				RaySample.AbsorptionAmount += 1-MaterialReflectiveness
 				RaySample.DensityAmount += MaterialDensity
@@ -636,7 +618,7 @@ function ReverbObject:_UpdateStep()
 			RaySample.AbsorptionAmount += ((1-MaterialReflectiveness/2))/self._RayParams.MaxReflections
 			RaySample.DensityAmount += MaterialDensity/self._RayParams.MaxReflections
 			if self._RayParams.DebugMode then
-				self:_CreateRayVisual(Origin, Direction, Raycast.Distance, Color3.new(0,1,0), 0)
+				self:_CreateRayVisual(Origin, Direction, Raycast.Distance, Color3.new(1, 1, 1), 0)
 			end
 			LastRaycast = Raycast
 		end
@@ -658,77 +640,400 @@ function ReverbObject:_UpdateStep()
 	local RaySampleArray = {}
 	for RayCount = 1, self._RayParams.RaysPerStep, 1 do
 		local Reflected = false
-		local LastRaycast: RaycastResult = nil
+		local LastRaycast = nil
 
 		local RaySample = DoRayLoop()
 
 		table.insert(RaySampleArray, RaySample)
 	end
 
-	local AveragedSample = {
-		TotalBounces = 0;
-		Density = 0;
-		Absorption = 0;
-		Distance = 0;
-		AverageBounces = 0;
-		DistanceWeight = 0;
-		TotalDistance = 0;
-	}
-
-	local DensityFactor = math.clamp(AveragedSample.Density, 0, 1)
-	local BaseDensity = 0.  -- Adjust this base value as needed
-	local MaxDensity = 1.0   -- Maximum density value
-
-	for _, RaySample: SoundRayResult in RaySampleArray do
-		AveragedSample.Density += RaySample.DensityAmount / (RaySample.Bounces+1) / self._RayParams.RaysPerStep
-		AveragedSample.Absorption += RaySample.AbsorptionAmount / (RaySample.Bounces+1) / self._RayParams.RaysPerStep
-		AveragedSample.DistanceWeight += GetDistanceWeight(RaySample.TotalDistance/(RaySample.Bounces+1)) / self._RayParams.RaysPerStep
-		AveragedSample.TotalDistance += RaySample.TotalDistance
-		AveragedSample.TotalBounces += RaySample.Bounces / self._RayParams.RaysPerStep
-		AveragedSample.AverageBounces += RaySample.Bounces / (RaySample.Bounces+1) / self._RayParams.RaysPerStep
+	local function arbitraryPrecisionAdd(a, b, precision)
+		local sum = a + b
+		local error = (a - sum) + b
+		for _ = 1, precision do
+			sum = sum + error
+			error = error - (sum - a - b)
+		end
+		return sum
 	end
 
+	local function arbitraryPrecisionMultiply(a, b, precision)
+		local product = a * b
+		local error = a * b - product
+		for _ = 1, precision do
+			local correction = error * (1 + 2^-53)
+			product = product + correction
+			error = error - correction
+		end
+		return product
+	end
 
+	local function arbitraryPrecisionDivide(a, b, precision)
+		local quotient = a / b
+		for _ = 1, precision do
+			quotient = quotient + (a - quotient * b) / b
+		end
+		return quotient
+	end
+
+	local function arbitraryPrecisionSqrt(x, iterations)
+		local r = x
+		for _ = 1, iterations do
+			r = 0.5 * (r + x / r)
+		end
+		return r
+	end
+
+	local AveragedSample = {
+		TotalBounces = 0,
+		Density = 0,
+		Absorption = 0,
+		Distance = 0,
+		AverageBounces = 0,
+		DistanceWeight = 0,
+		TotalDistance = 0
+	}
+
+	local highPrecision = 100  -- Adjust this for even higher precision
+
+	for _, RaySample in ipairs(RaySampleArray) do
+		local bouncesPlus1 = arbitraryPrecisionAdd(RaySample.Bounces, 1, highPrecision)
+		local raysPerStep = self._RayParams.RaysPerStep
+
+		AveragedSample.Density = arbitraryPrecisionAdd(
+			AveragedSample.Density,
+			arbitraryPrecisionDivide(
+				arbitraryPrecisionDivide(RaySample.DensityAmount, bouncesPlus1, highPrecision),
+				raysPerStep,
+				highPrecision
+			),
+			highPrecision
+		)
+
+		AveragedSample.Absorption = arbitraryPrecisionAdd(
+			AveragedSample.Absorption,
+			arbitraryPrecisionDivide(
+				arbitraryPrecisionDivide(RaySample.AbsorptionAmount, bouncesPlus1, highPrecision),
+				raysPerStep,
+				highPrecision
+			),
+			highPrecision
+		)
+
+		local distanceWeight = GetDistanceWeight(
+			arbitraryPrecisionDivide(RaySample.TotalDistance, bouncesPlus1, highPrecision)
+		)
+		AveragedSample.DistanceWeight = arbitraryPrecisionAdd(
+			AveragedSample.DistanceWeight,
+			arbitraryPrecisionDivide(distanceWeight, raysPerStep, highPrecision),
+			highPrecision
+		)
+
+		AveragedSample.TotalDistance = arbitraryPrecisionAdd(
+			AveragedSample.TotalDistance,
+			RaySample.TotalDistance,
+			highPrecision
+		)
+
+		AveragedSample.TotalBounces = arbitraryPrecisionAdd(
+			AveragedSample.TotalBounces,
+			arbitraryPrecisionDivide(RaySample.Bounces, raysPerStep, highPrecision),
+			highPrecision
+		)
+
+		AveragedSample.AverageBounces = arbitraryPrecisionAdd(
+			AveragedSample.AverageBounces,
+			arbitraryPrecisionDivide(
+				arbitraryPrecisionDivide(RaySample.Bounces, bouncesPlus1, highPrecision),
+				raysPerStep,
+				highPrecision
+			),
+			highPrecision
+		)
+	end
+
+	local function clamp(value, min, max)
+		return math.min(math.max(value, min), max)
+	end
 
 	local FinalResult = {
 		EqualizerSoundEffect = {
-			HighGain = 0;
-			MidGain = 0;
+			HighGain = 0,
+			MidGain = 0,
 			LowGain = 0
-		};
-
+		},
 		ReverbSoundEffect = {
-			Density = 0;
-			WetLevel = 0;
-			Diffusion = 0;
-			DryLevel = 0;
-		};
+			Density = 0,
+			WetLevel = 0,
+			Diffusion = 0,
+			DryLevel = 0,
+		}
 	}
 
-
-
 	FinalResult.ReverbSoundEffect.Density = AveragedSample.Density
-	FinalResult.ReverbSoundEffect.DecayTime = math.clamp(
-		0.1 + (2 * AveragedSample.DistanceWeight) + (3 * AveragedSample.Density),
+
+	FinalResult.ReverbSoundEffect.DecayTime = clamp(
+		arbitraryPrecisionAdd(
+			0.1,
+			arbitraryPrecisionAdd(
+				arbitraryPrecisionMultiply(2, AveragedSample.DistanceWeight, highPrecision),
+				arbitraryPrecisionMultiply(3, AveragedSample.Density, highPrecision),
+				highPrecision
+			),
+			highPrecision
+		),
 		0.1,
 		20
 	)
-	FinalResult.ReverbSoundEffect.WetLevel = math.clamp(-20 + (30 * AveragedSample.AverageBounces) + (5 * (-4+AveragedSample.DistanceWeight)), -80, 0)
-	FinalResult.ReverbSoundEffect.Diffusion = math.clamp(0.2 + (0.8 * (1 - AveragedSample.AverageBounces) * (1-AveragedSample.Absorption)), 0, 1)
 
-	-- Calculate DryLevel (this took so long to find out holy)
-	FinalResult.ReverbSoundEffect.DryLevel = math.clamp(-10 + (20 * (1 - AveragedSample.Absorption)) + (5 * AveragedSample.DistanceWeight), -10, 6)
+	FinalResult.ReverbSoundEffect.WetLevel = clamp(
+		arbitraryPrecisionAdd(
+			-20,
+			arbitraryPrecisionAdd(
+				arbitraryPrecisionMultiply(30, AveragedSample.AverageBounces, highPrecision),
+				arbitraryPrecisionMultiply(5, arbitraryPrecisionAdd(-4, AveragedSample.DistanceWeight, highPrecision), highPrecision),
+				highPrecision
+			),
+			highPrecision
+		),
+		-80,
+		0
+	)
+
+	FinalResult.ReverbSoundEffect.Diffusion = clamp(
+		arbitraryPrecisionAdd(
+			0.2,
+			arbitraryPrecisionMultiply(
+				0.8,
+				arbitraryPrecisionMultiply(
+					arbitraryPrecisionAdd(1, -AveragedSample.AverageBounces, highPrecision),
+					arbitraryPrecisionAdd(1, -AveragedSample.Absorption, highPrecision),
+					highPrecision
+				),
+				highPrecision
+			),
+			highPrecision
+		),
+		0,
+		1
+	)
+
+	FinalResult.ReverbSoundEffect.DryLevel = clamp(
+		arbitraryPrecisionAdd(
+			-10,
+			arbitraryPrecisionAdd(
+				arbitraryPrecisionMultiply(20, arbitraryPrecisionAdd(1, -AveragedSample.Absorption, highPrecision), highPrecision),
+				arbitraryPrecisionMultiply(5, AveragedSample.DistanceWeight, highPrecision),
+				highPrecision
+			),
+			highPrecision
+		),
+		-10,
+		6
+	)
+
+	FinalResult.EqualizerSoundEffect.HighGain = arbitraryPrecisionAdd(-AveragedSample.Density, _3DSound(), highPrecision)
 
 
-	FinalResult.EqualizerSoundEffect.HighGain = -AveragedSample.Density + _3DSound()
-	if self._SoundParams.Do3DMuffle then
 
-		if not CanSeeCam(Filter) then
-			FinalResult.EqualizerSoundEffect.HighGain -= 20 * (self._ReferenceCamera.CFrame.Position-self._EmitPosition).Magnitude/40
-		else
-			FinalResult.EqualizerSoundEffect.HighGain -= 2 * (self._ReferenceCamera.CFrame.Position-self._EmitPosition).Magnitude/40
+	local EarlyReflections = {}
+	local MaxEarlyReflections = 12 -- Number of early reflections to consider
+	local EarlyReflectionDelay = 0.02 -- Delay between early reflections in seconds
+
+	local TotalRays = self._RayParams.RaysPerStep
+	local TotalReflections = 0
+	local TotalAbsorptions = 0
+	local TotalMisses = 0
+	local AverageDistance = 0
+	local AverageDensity = 0
+	local AverageReflectiveness = 0
+
+	for i = 1, TotalRays do
+		local Direction = RandomDirection()
+		local Origin = self._EmitPosition
+		local RaycastParam = RaycastParams.new()
+		RaycastParam.FilterType = Enum.RaycastFilterType.Exclude
+		RaycastParam.FilterDescendantsInstances = Filter
+		RaycastParam.IgnoreWater = true
+
+		local ReflectionCount = 0
+		local TotalDistance = 0
+		local LastHit = nil
+
+		while ReflectionCount < self._RayParams.MaxReflections do
+			local RayResult = workspace:Raycast(Origin, Direction * self._RayParams.MaxDistance, RaycastParam)
+
+			if RayResult then
+				local HitDistance = (RayResult.Position - Origin).Magnitude
+				TotalDistance += HitDistance
+
+				-- Early Reflection Logic
+				if ReflectionCount < MaxEarlyReflections then
+					table.insert(EarlyReflections, {
+						Distance = TotalDistance,
+						Delay = TotalDistance / 343 + ReflectionCount * EarlyReflectionDelay, -- 343 m/s is speed of sound
+						Intensity = 1 / (TotalDistance * TotalDistance) -- Inverse square law
+					})
+				end
+
+				local MaterialName = RayResult.Material.Name
+				local Density, Reflectiveness = GetMaterialStat(MaterialName)
+
+				AverageDensity += Density
+				AverageReflectiveness += Reflectiveness
+
+				if self._RayParams.DebugMode then
+					self:_CreateRayVisual(Origin, Direction * HitDistance, HitDistance, Color3.new(0,1,0), 0.75)
+				end
+
+				if self._RandomSeed:NextNumber() > Reflectiveness then
+					TotalAbsorptions += 1
+					if self._RayParams.DebugMode then
+						self:_CreateRayVisual(RayResult.Position, RayResult.Normal, 2, Color3.new(1,0,1), 0)
+					end
+					break
+				end
+
+				Origin = RayResult.Position
+				Direction = Reflect(Direction, RayResult.Normal)
+				ReflectionCount += 1
+				TotalReflections += 1
+				LastHit = RayResult
+			else
+				TotalMisses += 1
+				if self._RayParams.DebugMode then
+					self:_CreateRayVisual(Origin, Direction * self._RayParams.MaxDistance, self._RayParams.MaxDistance, Color3.new(1,0,0), 0.75)
+				end
+				break
+			end
 		end
 
+		AverageDistance += TotalDistance
+	end
+
+	AverageDistance /= TotalRays
+	AverageDensity /= (TotalReflections + TotalAbsorptions)
+	AverageReflectiveness /= (TotalReflections + TotalAbsorptions)
+	
+	
+	-- Process Early Reflections
+	local EarlyReflectionGain = 0
+	for _, reflection in ipairs(EarlyReflections) do
+		EarlyReflectionGain += reflection.Intensity
+	end
+	EarlyReflectionGain = EarlyReflectionGain / #EarlyReflections
+
+	-- Calculate reverb parameters
+	local Diffusion = Normalize(TotalReflections / TotalRays, 0, self._RayParams.MaxReflections)
+	local DecayTime = AverageDistance / 343 * 2 -- 343 m/s is speed of sound
+	local Density = AverageDensity
+	local WetLevel = AverageReflectiveness
+
+	-- Apply early reflections to reverb parameters
+	Diffusion = Diffusion * (1 + EarlyReflectionGain)
+	DecayTime = DecayTime * (1 - EarlyReflectionGain * 0.2) -- Slightly reduce decay time based on early reflections
+	WetLevel = WetLevel * (1 + EarlyReflectionGain * 0.5)
+
+	local LateReflectionCount = 50 -- Number of late reflections to simulate
+	local LateReflectionStartTime = 0.08 -- 80 ms, typical transition from early to late reflections
+	local LateReflectionDecayTime = 1.5 -- Adjustable based on room size
+	
+	local EarlyReflections = {}
+	local LateReflections = {}
+	local MaxEarlyReflections = 10
+	local EarlyReflectionDelay = 0.02
+	
+	local LateReflectionEnergy = 0
+	for i = 1, LateReflectionCount do
+		local delay = LateReflectionStartTime + i * (LateReflectionDecayTime / LateReflectionCount)
+		local energy = math.exp(-delay / LateReflectionDecayTime)
+		LateReflectionEnergy = LateReflectionEnergy + energy
+		table.insert(LateReflections, {
+			Delay = delay,
+			Energy = energy
+		})
+	end
+	
+	function ReverbObject:CalculateEarlyReflectionGain(EarlyReflections)
+		local totalGain = 0
+		for _, reflection in ipairs(EarlyReflections) do
+			totalGain = totalGain + reflection.Intensity
+		end
+		return totalGain / #EarlyReflections
+	end
+
+	function ReverbObject:CalculateLateReflectionGain(LateReflections)
+		local totalGain = 0
+		for _, reflection in ipairs(LateReflections) do
+			totalGain = totalGain + reflection.Energy
+		end
+		return totalGain / #LateReflections
+	end
+
+	function ReverbObject:EstimateRoomSize(AverageDistance)
+		-- Simple estimation based on average ray distance
+		return math.clamp(AverageDistance / 10, 0, 1)
+	end
+
+	function ReverbObject:CalculateReverberance(LateReflections, RoomSize)
+		local lateDensity = #LateReflections / LateReflectionCount
+		return math.clamp(lateDensity * RoomSize, 0, 1)
+	end
+	
+	-- Normalize late reflection energy
+	for _, reflection in ipairs(LateReflections) do
+		reflection.Energy = reflection.Energy / LateReflectionEnergy
+	end
+
+	-- Calculate reverb parameters
+	local Diffusion = Normalize(TotalReflections / TotalRays, 0, self._RayParams.MaxReflections)
+	local DecayTime = AverageDistance / 343 * 2 -- 343 m/s is speed of sound
+	local Density = AverageDensity
+	local WetLevel = AverageReflectiveness
+
+	-- Apply early and late reflections to reverb parameters
+	local EarlyReflectionGain = self:CalculateEarlyReflectionGain(EarlyReflections)
+	local LateReflectionGain = self:CalculateLateReflectionGain(LateReflections)
+
+	Diffusion = Diffusion * (1 + EarlyReflectionGain * 0.5 + LateReflectionGain * 0.5)
+	DecayTime = DecayTime * (1 + LateReflectionGain * 0.2)
+	WetLevel = WetLevel * (1 + EarlyReflectionGain * 0.3 + LateReflectionGain * 0.7)
+
+	-- Additional late reflection effects
+	local RoomSize = self:EstimateRoomSize(AverageDistance)
+	local Reverberance = self:CalculateReverberance(LateReflections, RoomSize)
+
+	-- Update LatestResult with new parameters
+	self.LatestResult.ReverbSoundEffect.Diffusion = Diffusion
+	self.LatestResult.ReverbSoundEffect.DecayTime = DecayTime
+	self.LatestResult.ReverbSoundEffect.Density = Density
+	self.LatestResult.ReverbSoundEffect.WetLevel = WetLevel
+	self.LatestResult.ReverbSoundEffect.Reverberance = Reverberance
+	
+	
+
+	if self._SoundParams.Do3DMuffle then
+		if not CanSeeCam(Filter) then
+			FinalResult.EqualizerSoundEffect.HighGain = arbitraryPrecisionAdd(
+				FinalResult.EqualizerSoundEffect.HighGain,
+				arbitraryPrecisionMultiply(
+					-20,
+					arbitraryPrecisionDivide((self._ReferenceCamera.CFrame.Position - self._EmitPosition).Magnitude, 40, highPrecision),
+					highPrecision
+				),
+				highPrecision
+			)
+		else
+			FinalResult.EqualizerSoundEffect.HighGain = arbitraryPrecisionAdd(
+				FinalResult.EqualizerSoundEffect.HighGain,
+				arbitraryPrecisionMultiply(
+					-2,
+					arbitraryPrecisionDivide((self._ReferenceCamera.CFrame.Position - self._EmitPosition).Magnitude, 40, highPrecision),
+					highPrecision
+				),
+				highPrecision
+			)
+		end
 	end
 
 	self.LatestResult = FinalResult
