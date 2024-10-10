@@ -16,12 +16,19 @@ Yeah honest to god i'll never do this shit again.
 
 7: Takes into consideration the room's size and such
 
-8: Each material has its value like Density and Absorption
+8: Each material has its value like Density and Absorption.
 
 9: Adjustable distance reach
 
 10: Takes into consideration the distance between rays and the impact point
 
-11: A shit ton of other features I can't name right now but they do exist if your thinking of them
+11: A shit ton of other features I can't name right now but they do exist if your thinking of them.
+
+# Other features I haven't added but will be a thing soon:
+
+Diffuse reflection (search it up).
+
+I would have added more features, but the school laptop blocks everything related to coding except this. They blocked most of the websites i research with
+
 
 
