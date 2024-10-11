@@ -28,7 +28,7 @@ Yeah honest to god I'll never do this shit again.
 
 Diffuse reflection (search it up).
 
-I would have added more features, but the school laptop blocks everything related to coding except this. They blocked most of the websites I researched to get these results.
+I would have added more features, but the school laptop blocks everything related to coding except this. They blocked most of the websites I researched to get these results. I'll add them here when i get on my actual pc AND also don't forget about it
 
 # "Why no code work?"
 
