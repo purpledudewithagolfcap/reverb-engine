@@ -1,15 +1,21 @@
 --[[
 	This is rather expensive to run,
 	I do NOT recommend using this if you are at all concerned with performance.
-	Maybe one day I might parallelize it, but for now this works.
+	Maybe one day I might parallelize it, but for now, this works.
+
+	ALSO PLEASE CHECK THE COMMENTS I FORGOT IF I LEFT ANY BAD MESSAGES OR SWEAR WORDS 
+	SO PLEASE CHECK TO NOT GET YOURSELF BANNED (do ctrl+f and search up any naughty words and just rewrite them to your desire)
 	
 	Recreation of the first version which I made for personal use.
-	V2 fixes alot of problems with the first iteration of this module; mainly related to how I handled absorption.
+	V2 fixes a lot of problems with the first iteration of this module; mainly related to how I handled absorption.
+	Now that V3 is out I'll tell you what I added. In this update I added Late reflection and  early reflection. which is already a huge update BUT another thing I changed is I rewrote the reflection system entirely.
+	The reflection system might be over the top but hey, it's a technical marvel that I even got the damn thing to work, and not just work but work in the best possible way ever
+	I cannot tell you how fucking long it took to get the reflect() to even fire a single ray and bounce ONCE. it got me so tired when I finished it. You can just modify the reflect() to suit your needs just please remember how long it took to even write it
 	You are free to use this as you wish, and please notify me if you find any bugs.
-	Credit is not required but definitely appriciated!
+	Credit is not required but appreciated!
 	
 	---Quick Start Guide---
-		1. Require the module (duh). Make sure you do this on the client, as it doesn't make much sense to have the server calculate the reverb (alsao it doesn't work serverside anyways).
+		1. Require the module (duh). Make sure you do this on the client, as it doesn't make much sense to have the server calculate the reverb (also it doesn't work serverside anyway).
 		2. Create rayParams with SoundReverbV2.newRayParams() to specify where to shoot rays from, how many rays, etc.
 		3. Make a new ReverbObject with SoundReverbV2.new(RayParams: rayParams?, SoundParams: soundParams?), and you can pass your params through with it.
 		4. Add your sound(s) with ReverbObject:AddSound(MySound)
@@ -34,7 +40,7 @@
 	---------------------------------------
 	[Functions]
 	
-	Note: You don't have to fill out every single argument, there are defaults that usually work well enough (except for PositionOrPart, which will default to [0,0,0]).
+	Note: You don't have to fill out every single argument, some defaults usually work well enough (except for PositionOrPart, which will default to [0,0,0]).
 	# SoundReverbV2.newRayParams( 
 		PositionOrPart: Vector3 | BasePart, -- Where to shoot rays from, if you supply a part then that part will be automatically tracked, if a Vector3 then you will have to update it yourself with ReverbObject:UpdatePosition()
 		MaxReflections: number, -- How many reflections can occur.
@@ -45,12 +51,14 @@
 	)
 			returns rayParams
 
+	
 
-	Note: You don't have to fill out every single argument, there are defaults that usually work well enough.
+
+	Note: You don't have to fill out every single argument, some defaults usually work well enough.
 	# SoundReverbV2.newSoundParams(
 		LerpTime: number, -- How long the lerp between one value to another is (i.e. Going from 1->0 with a LerpTime of 2 would take 2 seconds)
 		GroupVolume: number, -- Volume of the sound group; mostly useless, just modify the sound itself.
-		Do3DMuffle: boolean, -- Whether or not to muffle sounds behind walls/where the camera cant see them.
+		Do3DMuffle: boolean, -- Whether or not to muffle sounds behind walls/where the camera can't see them.
 	)
 			returns soundParams
 	
@@ -72,7 +80,7 @@
 	
 	# ReverbObject:StartUpdate() -- Starts firing rays,
 	
-	# ReverbObject:StopUpdate() -- Stops firing rays, keeps the same reverb values.
+	# ReverbObject:StopUpdate() -- Stops firing rays, and keeps the same reverb values.
 	
 	Note: Only use this if you didn't supply a part in the rayParams.
 	# ReverbObject:UpdatePosition(
@@ -84,11 +92,11 @@
 	)
 	
 	# ReverbObject:UpdateRayParams(
-		RayParams: rayParams -- self explanatory
+		RayParams: rayParams -- self-explanatory
 	)
 	
 	# ReverbObject:UpdateRayParams(
-		SoundParams: soundParams -- self explanatory
+		SoundParams: soundParams -- self-explanatory
 	)
 	
 	# ReverbObject:SetReferenceCamera(
@@ -104,19 +112,19 @@
 	> SoundReverbV2.MaterialReflectiveness: {["Material"]: number} -- Table of materials that dictates how reflective things are, changes WetLevel, RayBounces, and Diffusion.
 	
 	> ReverbObject.FilterDescendantsInstances: {any} -- Equivalent to RaycastParams.FilterDescendantsInstances
-	> ReverbObject.LatestResult: {EqualizerSoundEffect: {any}, ReverbSoundEffect: {any}} -- Table of calculated properties for the sound effects, updates on heartbeat.
-	> ReverbObject.LastPerformanceTick: number -- How long (in ms) it took to do everything, updates on heartbeat.
+	> ReverbObject.LatestResult: {EqualizerSoundEffect: {any}, ReverbSoundEffect: {any}} -- Table of calculated properties for the sound effects, updates on a heartbeat.
+	> ReverbObject.LastPerformanceTick: number -- How long (in ms) it took to do everything, updates on a heartbeat.
 	> ReverbObject.AutoApplyList: {Sound} -- Table of sounds to apply reverb to.
 	> ReverbObject.StepComplete: RBXScriptSignal -- Signal that you can connect to, fires every heartbeat AFTER everything has been applied.
 ]]
 
-local VersionNumber = 2
+local VersionNumber = 3 --I would have put like 2.5 but honestly it deserves a 3 for the amount of coding I did.
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local CastVisuals = require(script.CastVisuals)
 local GoodSignal = require(script.GoodSignal)
 
-local SoundReverbV2 = {
+local SoundReverbV2 = { -- self-explanitory 
 	MaterialDensity = {
 		Plastic = 0.6,
 		ForceField = 0.2,
@@ -186,30 +194,30 @@ local SoundReverbV2 = {
 local ReverbObject = {}
 ReverbObject.__index = ReverbObject
 
-if RunService:IsServer() then
+if RunService:IsServer() then -- cant be run on server side :(
 	error("SoundReverbV2 can only be required on the client.")
 end
 
 function SoundReverbV2.newRayParams(PositionOrPart, MaxReflections, RaysPerStep, MaxDistance, IgnoreTransparentParts, DebugMode)
 	local RayParams = {}
 	RayParams.Position = PositionOrPart or Vector3.new()
-	RayParams.MaxReflections = MaxReflections or 4
-	RayParams.RaysPerStep = RaysPerStep or 40
-	RayParams.MaxDistance = MaxDistance or 500
-	RayParams.IgnoreTransparentParts = IgnoreTransparentParts or true
-	RayParams.DebugMode = DebugMode or false
+	RayParams.MaxReflections = MaxReflections or 4 -- how much the rays can reflect per hit before being finalized
+	RayParams.RaysPerStep = RaysPerStep or 40 -- how many rays per framerate basically 
+	RayParams.MaxDistance = MaxDistance or 500 -- distances are in studs
+	RayParams.IgnoreTransparentParts = IgnoreTransparentParts or true -- self-explanatory
+	RayParams.DebugMode = DebugMode or false -- fancy line thing (it just shows the rays)
 	return RayParams
 end
 
 function SoundReverbV2.newSoundParams(LerpTime, GroupVolume, Do3DMuffle)
 	local SoundParams = {}
-	SoundParams.LerpTime = LerpTime or 0.15
-	SoundParams.GroupVolume = GroupVolume or 0.5
-	SoundParams.Do3DMuffle = Do3DMuffle or true
+	SoundParams.LerpTime = LerpTime or 0.15 -- smooths out the sounds transition and such
+	SoundParams.GroupVolume = GroupVolume or 0.5-- how loud is it
+	SoundParams.Do3DMuffle = Do3DMuffle or true -- a stupid way of handling occlusion (ill replace this shitty ass method later when I get back home)
 	return SoundParams
 end
 
-function SoundReverbV2.new(RayParams, SoundParams)
+function SoundReverbV2.new(RayParams, SoundParams) --defines most of the function to make the reverb thing work with other scripts.
 	local self = setmetatable({
 		_ReferenceCamera = workspace.CurrentCamera,
 		_RayParams = RayParams or SoundReverbV2.newRayParams(),
@@ -229,13 +237,13 @@ function SoundReverbV2.new(RayParams, SoundParams)
 		AutoApplyList = {},
 	}, ReverbObject)
 
-	self._DebugFolder = workspace:FindFirstChild("SoundReverbV2DebugRays")
+	self._DebugFolder = workspace:FindFirstChild("SoundReverbV2DebugRays") --creates a folder to store most of the rays in debug mode.
 	if not self._DebugFolder and self._RayParams.DebugMode then
 		self._DebugFolder = Instance.new("Folder", workspace)
 		self._DebugFolder.Name = "SoundReverbV2DebugRays"
 	end
 
-	if typeof(self._RayParams.Position) == "Vector3" then
+	if typeof(self._RayParams.Position) == "Vector3" then --finds the part or thing that you want to give reverb to.
 		self._EmitPosition = self._RayParams.Position
 	elseif typeof(self._RayParams.Position) == "Instance" then
 		assert(self._RayParams.Position:IsA("BasePart"), "Expected BasePart; got '"..self._RayParams.Position.ClassName.."'.")
@@ -248,7 +256,7 @@ function SoundReverbV2.new(RayParams, SoundParams)
 	return self
 end
 
-function ReverbObject:_CreateRayVisual(Origin, Direction, Magnitude, Color, Transparency)
+function ReverbObject:_CreateRayVisual(Origin, Direction, Magnitude, Color, Transparency) -- debug shit (just read the functions name)
 	local self = self
 	Color = Color or Color3.new(0,1,0)
 	Transparency = Transparency or 0
@@ -256,15 +264,15 @@ function ReverbObject:_CreateRayVisual(Origin, Direction, Magnitude, Color, Tran
 	CastVisual:Draw(Origin, Direction, Magnitude, Transparency)
 end
 
-function ReverbObject:_UpdateStep()
+function ReverbObject:_UpdateStep() -- where most of the juicy math and code stuff is contained inside.
 	local self=self
 	local Filter = table.clone(self.FilterDescendantsInstances)
 
-	local function Normalize(Value, Min, Max)
+	local function Normalize(Value, Min, Max) -- normalized so i don't get random ahh bugs
 		return (Value - Min)/(Max-Min)
 	end
 
-	local function _3DSound()
+	local function _3DSound() -- 3d sound (it sucks ass for what I had in mind but it's fine for rn)
 		local _, Listener = SoundService:GetListener()
 		local ListenerPosition
 		if Listener then
@@ -280,7 +288,7 @@ function ReverbObject:_UpdateStep()
 		local Direction = (self._EmitPosition - ListenerPosition).Unit
 		local Distance = (self._EmitPosition - ListenerPosition).Magnitude
 
-		-- Perform a raycast from the listener to the sound source
+		-- Perform a ray cast from the listener to the sound source
 		local RaycastParam = RaycastParams.new()
 		RaycastParam.FilterType = Enum.RaycastFilterType.Exclude
 		RaycastParam.FilterDescendantsInstances = self.FilterDescendantsInstances
@@ -298,7 +306,7 @@ function ReverbObject:_UpdateStep()
 		end
 	end
 
-	local function GetMaterialStat(MaterialName: string)
+	local function GetMaterialStat(MaterialName: string) -- yells at you if you're missing a material from the list above
 		if not SoundReverbV2.MaterialDensity[MaterialName] or not SoundReverbV2.MaterialReflectiveness[MaterialName] then
 			if script:GetAttribute("MaterialWarn") then
 				warn("Material '"..MaterialName.."' does not have a Density or Reflectiveness set; defaulting to 'Plastic'")
@@ -308,11 +316,12 @@ function ReverbObject:_UpdateStep()
 		return SoundReverbV2.MaterialDensity[MaterialName], SoundReverbV2.MaterialReflectiveness[MaterialName]
 	end
 
-	local function RandomDirection()
+	local function RandomDirection() -- makes random directions :shock:
 		local Direction = self._RandomSeed:NextUnitVector()
 		return Direction
 	end
-	local function Reflect(direction, normal)
+	local function Reflect(direction, normal) -- a way to handle reflection (recommend skipping over this because it's very long)
+		-- math math math it's just a whole bunch of math. I lost my mind trying to code this
 		-- Ultra-high precision arithmetic helper functions
 		local function arbitraryPrecisionAdd(a, b, precision)
 			local sum = a + b
@@ -440,7 +449,7 @@ function ReverbObject:_UpdateStep()
 			return {w=w, x=x, y=y, z=z}
 		end
 
-		local function quaternionRotateVector(q, v)
+		local function quaternionRotateVector(q, v) -- each dimension has to be calculated individually for their quaternion vector. im so fucking tired pleaee hepl
 			local qw, qx, qy, qz = q.w, q.x, q.y, q.z
 			local x = arbitraryPrecisionAdd(
 				arbitraryPrecisionMultiply(arbitraryPrecisionAdd(1, -arbitraryPrecisionMultiply(2, arbitraryPrecisionAdd(arbitraryPrecisionMultiply(qy, qy, 100), arbitraryPrecisionMultiply(qz, qz, 100), 100), 100), 100), v.X, 100),
@@ -480,7 +489,7 @@ function ReverbObject:_UpdateStep()
 	end
 
 
-	local function ShootRay(Origin: Vector3, Direction: Vector3, Filter: {any})
+	local function ShootRay(Origin: Vector3, Direction: Vector3, Filter: {any}) -- actually starts firing the rays
 		local RaycastParam = RaycastParams.new()
 		RaycastParam.FilterType = Enum.RaycastFilterType.Exclude
 		RaycastParam.FilterDescendantsInstances = Filter
@@ -500,7 +509,7 @@ function ReverbObject:_UpdateStep()
 		return Raycast
 	end
 
-	local function CanSeeCam(Filter: {})
+	local function CanSeeCam(Filter: {}) -- determines if the camera can see the sound source (don't worry about it, its for _3Dsound)
 		local Player = game:GetService("Players").LocalPlayer
 		local Character = Player.Character
 		if Character then
@@ -532,11 +541,10 @@ function ReverbObject:_UpdateStep()
 		end
 		return true
 	end
-	----------------------------------------------------------EXPERIMENTAL MODE DO NOT MESS WITH------------------------------------
-	-- Helper function to calculate atmospheric attenuation
-	local function GetDistanceWeight(Distance: number)
+	
+	local function GetDistanceWeight(Distance: number) -- determines how far the rays are
 		-- Constants with high precision
-		local E = 2.7182818284590452353602874713527  -- Base of natural logarithm (e)
+		local E = 2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274  -- Base of the natural logarithm (e to a 100 digits)
 		local LOG_E = 1.0  -- Natural log of e is 1
 		local POWER = 1.6
 		local OFFSET = 0.8
@@ -564,15 +572,13 @@ function ReverbObject:_UpdateStep()
 		return Result
 	end
 
-	------------------------------------------------------------EXPERIMENTAL MODE ENDS HERE------------------------------------------------------------------------------
-
 
 
 
 	-- now here was my thought process. I wanted to design a truely endless and modular Reverb system that is 1: very accurate (if needed) and 2: the coder has control on what it wants.
 	-- thats why there is alot of over-engineered slop here because i want to see what i can get away with
 
-	local function DoRayLoop()
+	local function DoRayLoop() -- after the engine starts, this line handles most of the logic on finding all of those ray results
 		local RaySample: SoundRayResult = {
 			HitArray = {},
 			Bounces = 0,
@@ -631,7 +637,7 @@ function ReverbObject:_UpdateStep()
 	local BaseDecayTime = 1.0 -- Adjust this value based on your desired base decay time
 	local DistanceFactor = 0.7 -- Adjust to control how much distance affects decay time
 	local AbsorptionFactor = 0.5 -- Adjust to control how much absorption affects decay time
-	local MaxDecayTime = 10.0
+	local MaxDecayTime = 10.0 -- What do you think dawg
 	local MinDecayTime = 0.1
 
 
@@ -684,7 +690,7 @@ function ReverbObject:_UpdateStep()
 		return r
 	end
 
-	local AveragedSample = {
+	local AveragedSample = { -- after the loop finds the value, the value it gets sent here.
 		TotalBounces = 0,
 		Density = 0,
 		Absorption = 0,
@@ -694,13 +700,13 @@ function ReverbObject:_UpdateStep()
 		TotalDistance = 0
 	}
 
-	local highPrecision = 100  -- Adjust this for even higher precision
+	local highPrecision = 100  -- Adjust this for even higher precision (it's very computationally powerful so just keep it at 100)
 
 	for _, RaySample in ipairs(RaySampleArray) do
 		local bouncesPlus1 = arbitraryPrecisionAdd(RaySample.Bounces, 1, highPrecision)
 		local raysPerStep = self._RayParams.RaysPerStep
 
-		AveragedSample.Density = arbitraryPrecisionAdd(
+		AveragedSample.Density = arbitraryPrecisionAdd( -- thankfully the reflection system contains most of the function so i don't have to create so much math
 			AveragedSample.Density,
 			arbitraryPrecisionDivide(
 				arbitraryPrecisionDivide(RaySample.DensityAmount, bouncesPlus1, highPrecision),
@@ -752,12 +758,12 @@ function ReverbObject:_UpdateStep()
 		)
 	end
 
-	local function clamp(value, min, max)
+	local function clamp(value, min, max) -- clamps the number so they don't go overboard for Roblox standards
 		return math.min(math.max(value, min), max)
 	end
 
-	local FinalResult = {
-		EqualizerSoundEffect = {
+	local FinalResult = {-- defines the actual reverberation values that Roblox has
+		EqualizerSoundEffect = { 
 			HighGain = 0,
 			MidGain = 0,
 			LowGain = 0
@@ -769,7 +775,7 @@ function ReverbObject:_UpdateStep()
 			DryLevel = 0,
 		}
 	}
-
+		--Now here is where the actual reverb thing gets applied 
 	FinalResult.ReverbSoundEffect.Density = AveragedSample.Density
 
 	FinalResult.ReverbSoundEffect.DecayTime = clamp(
@@ -848,7 +854,7 @@ function ReverbObject:_UpdateStep()
 	local AverageDensity = 0
 	local AverageReflectiveness = 0
 
-	for i = 1, TotalRays do
+	for i = 1, TotalRays do -- the new early reflection and late reflection are here
 		local Direction = RandomDirection()
 		local Origin = self._EmitPosition
 		local RaycastParam = RaycastParams.new()
@@ -1049,7 +1055,7 @@ function ReverbObject:AddSound(Sound: Sound)
 	table.insert(self.AutoApplyList, Sound)
 end
 
-function ReverbObject:RemoveSound(Sound: Sound, RemoveReverb: boolean)
+function ReverbObject:RemoveSound(Sound: Sound, RemoveReverb: boolean) -- what do you think it does bruh
 	local self: ObjectMeta = self
 
 	RemoveReverb = RemoveReverb or true
