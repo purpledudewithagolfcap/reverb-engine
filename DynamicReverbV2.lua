@@ -1,4 +1,10 @@
 --[[
+
+Author: Addison Cheesmond (formaly known as Purple Dude With A Golf Cap on Discord)
+
+How long it took: like almost 2 months (still on-going)
+
+
 	This is rather expensive to run,
 	I do NOT recommend using this if you are at all concerned with performance.
 	Maybe one day I might parallelize it, but for now, this works.
@@ -13,7 +19,7 @@
 	The reflection system might be over the top but hey, it's a technical marvel that I even got the damn thing to work, and not just work but work in the best possible way ever
 	I cannot tell you how [fliping] long it took to get the reflect() to even fire a single ray and bounce ONCE. it got me so tired when I finished it. You can just modify the reflect() to suit your needs just please remember how long it took to even write it
 	You are free to use this as you wish, and please notify me if you find any bugs.
-	Credit is not required but appreciated!
+	Credit is not required but appreciated! or i'll find out, somehow (jk its all good)
 
 
 
@@ -126,8 +132,8 @@
 local VersionNumber = 3 --I would have put like 2.5 but honestly it deserves a 3 for the amount of coding I did.
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
-local CastVisuals = require(script.CastVisuals) --you need these 2 scripts. idk why yall be asking like jesus
-local GoodSignal = require(script.GoodSignal)
+local CastVisuals = require(script.CastVisuals) --you need this scripts. idk why yall be asking like jesus
+local GoodSignal = require(script.GoodSignal) --you need this scripts. idk why yall be asking like jesus
 
 local SoundReverbV2 = { -- self-explanitory 
 	MaterialDensity = {-- now the materials are educated guesses. I tried to base every material to the real world so
@@ -328,7 +334,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	local function Reflect(direction, normal) -- a way to handle reflection (recommend skipping over this because it's very long)
 		-- math math math it's just a whole bunch of math. I lost my mind trying to code this
 		-- Ultra-high precision arithmetic helper functions
-		local function arbitraryPrecisionAdd(a, b, precision)
+		local function arbitraryPrecisionAdd(a, b, precision) -- holy math
 			local sum = a + b
 			local error = (a - sum) + b
 			for _ = 1, precision do
@@ -692,7 +698,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 		for _ = 1, iterations do
 			r = 0.5 * (r + x / r)
 		end
-		return r
+		return r -- r
 	end
 
 	local AveragedSample = { -- after the loop finds the value, the value it gets sent here.
