@@ -168,7 +168,7 @@ local SoundReverbV2 = { -- self-explanitory
 		Snow = 0.2,
 		Water = 0.7
 	},
-	MaterialReflectiveness = {
+	MaterialReflectiveness = {-- another educated guess, change it to whatever you want
 		Plastic = 0.5,
 		ForceField = 1,
 		Glass = 0.7,
@@ -205,7 +205,7 @@ local SoundReverbV2 = { -- self-explanitory
 local ReverbObject = {}
 ReverbObject.__index = ReverbObject
 
-if RunService:IsServer() then -- cant be run on server side :(
+if RunService:IsServer() then -- cant be run on server side, why would you bruh
 	error("SoundReverbV2 can only be required on the client.")
 end
 
@@ -251,7 +251,7 @@ function SoundReverbV2.new(RayParams, SoundParams) --defines most of the functio
 	self._DebugFolder = workspace:FindFirstChild("SoundReverbV2DebugRays") --creates a folder to store most of the rays in debug mode.
 	if not self._DebugFolder and self._RayParams.DebugMode then
 		self._DebugFolder = Instance.new("Folder", workspace)
-		self._DebugFolder.Name = "SoundReverbV2DebugRays"
+		self._DebugFolder.Name = "SoundReverbV2DebugRays" -- idk why i have to say this but yall should not be messing with this unless you know what your doing
 	end
 
 	if typeof(self._RayParams.Position) == "Vector3" then --finds the part or thing that you want to give reverb to.
@@ -556,6 +556,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	local function GetDistanceWeight(Distance: number) -- determines how far the rays are
 		-- Constants with high precision
 		local E = 2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274  -- Base of the natural logarithm (e to a 100 digits)
+		-- you can change the digit to be more smaller.
 		local LOG_E = 1.0  -- Natural log of e is 1
 		local POWER = 1.6 -- power :O
 		local OFFSET = 0.8
@@ -664,7 +665,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 		table.insert(RaySampleArray, RaySample)
 	end
 
-	local function arbitraryPrecisionAdd(a, b, precision) -- math >:(
+	local function arbitraryPrecisionAdd(a, b, precision) -- math >:( not even hard just [fricking] annoying to code
 		local sum = a + b
 		local error = (a - sum) + b
 		for _ = 1, precision do
@@ -711,7 +712,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 		TotalDistance = 0
 	}
 
-	local highPrecision = 100  -- Adjust this for even higher precision (it's very computationally powerful so just keep it at 100)
+	local highPrecision = 100  -- adjust this for even higher precision (it's very computationally powerful so just keep it at 100)
 
 	for _, RaySample in ipairs(RaySampleArray) do
 		local bouncesPlus1 = arbitraryPrecisionAdd(RaySample.Bounces, 1, highPrecision)
@@ -851,7 +852,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 
 	FinalResult.EqualizerSoundEffect.HighGain = arbitraryPrecisionAdd(-AveragedSample.Density, _3DSound(), highPrecision)
 
-
+ 	-- i would of placed it somewhere good but for right now this works even though its in a not so good spot
 
 	local EarlyReflections = {}
 	local MaxEarlyReflections = 12 -- Number of early reflections to consider
