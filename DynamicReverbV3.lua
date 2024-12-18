@@ -201,7 +201,7 @@ local SoundReverbV2 = { -- self-explanitory
 		Water = 0.8
 	},
 	MaterialFrequency = { -- about time I got working on this. 
-	    	Plastic     = {Low=0.05, Mid=0.10, High=0.15},
+	    	Plastic     = {Low=0.05, Mid=0.10, High=0.15},--the frequency in which the material absorbs from low to high. (i cant exactly find it easily so i just approximated the value)
     		ForceField  = {Low=0.02, Mid=0.03, High=0.04},
     		Concrete    = {Low=0.05, Mid=0.10, High=0.15},
     		Glass       = {Low=0.02, Mid=0.03, High=0.04},
@@ -367,7 +367,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	local function CalculateFrequencyAbsorption(materialName: string, distance: number, temperature: number, humidity: number)
 	    local properties = SoundReverbV2.MaterialFrequency[materialName] or SoundReverbV2.MaterialFrequency.Plastic
 	    local tempFactor = 1 + (temperature - 20) * 0.01 -- temperature. 
-	    local humidityFactor = 1 - (humidity / 100) * 0.5 -- humidity
+	    local humidityFactor = 1 - (humidity / 100) * 0.5 -- humidity.
 	    local adjustedLow = properties.Low * tempFactor * humidityFactor
 	    local adjustedMid = properties.Mid * tempFactor * humidityFactor
 	    local adjustedHigh = properties.High * tempFactor * humidityFactor
@@ -388,7 +388,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	
 	local function SimulateDiffusion(incidentDirection: Vector3, normal: Vector3, materialName: string)
 	    local properties = SoundReverbV2.MaterialReflectiveness[materialName] or SoundReverbV2.MaterialReflectiveness.Plastic
-	    local roughness = 0.1 -- i wonder what this does 🤔
+	    local roughness = 0.1 -- i wonder what this does 🤔. messing with this  value will make the rays more chaotic and unpredictable 
 	
 	    local reflectedDirection = incidentDirection - (2 * incidentDirection:Dot(normal) * normal)
 	
