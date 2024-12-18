@@ -199,6 +199,38 @@ local SoundReverbV2 = { -- self-explanitory
 		Rock = 0.25,
 		Snow = 0.3,
 		Water = 0.8
+	},
+	MaterialFrequency = { -- right now this does nothing, but we are working on something in the background :) 
+	    	Plastic     = {Low=0.05, Mid=0.10, High=0.15},
+    		ForceField  = {Low=0.02, Mid=0.03, High=0.04},
+    		Concrete    = {Low=0.05, Mid=0.10, High=0.15},
+    		Glass       = {Low=0.02, Mid=0.03, High=0.04},
+    		Grass       = {Low=0.15, Mid=0.20, High=0.25},
+    		SmoothPlastic = {Low=0.05, Mid=0.10, High=0.15},
+    		Cobblestone = {Low=0.10, Mid=0.15, High=0.20},
+    		Fabric      = {Low=0.05 , Mid=0.15 , High=0.25}, 
+    		Wood        = {Low=0.12 , Mid=0.18 , High=0.23}, 
+    		WoodPlanks  = {Low=0.10 , Mid=0.15 , High=0.20}, 
+    		Brick       = {Low=0.12 , Mid=0.20 , High=0.30}, 
+    		Sand        = {Low=0.15 , Mid=0.25 , High=0.35},
+    		Salt        = {Low=0.06 , Mid=0.10 , High=0.14}, 
+    		Ice         = {Low=0.02 , Mid=0.04 , High=0.06}, 
+    		Metal       = {Low=0.05 , Mid=0.07 , High=0.09}, 
+    		DiamondPlate ={Low=0.04 , Mid=0.06 , High=0.08}, 
+    		Marble      = {Low=0.08 , Mid=0.12 , High=0.16}, 
+    		Limestone    = {Low=0.09 , Mid=0.13 , High=0.17}, 
+    		Slate        = {Low=0.07 , Mid=0.11 , High=0.15}, 
+    		Granite      = {Low=0.05 , Mid=0.07 , High=0.09}, 
+    		Neon        = {Low=.03 , Mid=.05 , High=.07}, 
+    		CorrodedMetal ={Low=.06 , Mid=.08 , High=.10}, 
+    		Foil        = {Low=.02 , Mid=.04 , High=.06}, 
+    		Asphalt      = {Low=.10 , Mid=.15 , High=.20},
+    		LeafyGrass   ={Low=.05 , Mid=.08 , High=.12}, 
+    		Mud          ={Low=.12 , Mid=.18 , High=.24}, 
+    		Pavement     ={Low=.08 , Mid=.12 , High=.16}, 
+    		Rock         ={Low=.10 , Mid=.15 , High=.20}, 
+    		Snow         ={Low=.02, Mid=.04, High=.06}, 
+    		Water        ={Low=.01, Mid=.02, High=.03} 
 	}
 }
 
@@ -269,8 +301,8 @@ end
 
 function ReverbObject:_CreateRayVisual(Origin, Direction, Magnitude, Color, Transparency) -- debug [slop] (just read the functions name)
 	local self = self
-	Color = Color or Color3.new(0,1,0) -- flashy colors (dont actually try to edit this value, go into CastVisual and change it from there)
-	Transparency = Transparency or 0 -- opauqe
+	Color = Color or Color3.new(0,1,0) -- flashy colors (don't try to edit this value, go into CastVisual and change it from there)
+	Transparency = Transparency or 0 -- opaque
 	local CastVisual = CastVisuals.new(Color, self._DebugFolder) 
 	CastVisual:Draw(Origin, Direction, Magnitude, Transparency)
 end
@@ -322,12 +354,12 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 			if script:GetAttribute("MaterialWarn") then
 				warn("Material '"..MaterialName.."' does not have a Density or Reflectiveness set; defaulting to 'Plastic'")
 			end
-			MaterialName = "Plastic" -- dont ask why i choosed plastic but yeah
+			MaterialName = "Plastic" -- if the material that the ray hits has no density or reflectiveness, then it will just default to plastic.
 		end
 		return SoundReverbV2.MaterialDensity[MaterialName], SoundReverbV2.MaterialReflectiveness[MaterialName]
 	end
 
-	local function RandomDirection() -- makes random directions :shock:
+	local function RandomDirection() -- makes random directions 🤯
 		local Direction = self._RandomSeed:NextUnitVector()
 		return Direction
 	end
@@ -529,7 +561,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 		local RaycastParam = RaycastParams.new()
 		RaycastParam.FilterType = Enum.RaycastFilterType.Exclude
 		RaycastParam.FilterDescendantsInstances = Filter
-		local MiddleOfViewport = self._ReferenceCamera.ViewportSize/2 --roblox please actually add readable values :sob:
+		local MiddleOfViewport = self._ReferenceCamera.ViewportSize/2 
 		local SightOrigin = self._ReferenceCamera.CFrame.Position
 		local Direction = (self._EmitPosition - SightOrigin).Unit * ((self._EmitPosition - SightOrigin).Magnitude + 0.01)
 		local SightRaycast = workspace:Raycast(SightOrigin, Direction, RaycastParam)
@@ -556,7 +588,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	local function GetDistanceWeight(Distance: number) -- determines how far the rays are
 		-- Constants with high precision
 		local E = 2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274  -- Base of the natural logarithm (e to a 100 digits)
-		-- you can change the digit to be more smaller.
+		-- you can change the digit to be smaller.
 		local LOG_E = 1.0  -- Natural log of e is 1
 		local POWER = 1.6 -- power :O
 		local OFFSET = 0.8
