@@ -200,7 +200,7 @@ local SoundReverbV2 = { -- self-explanitory
 		Snow = 0.3,
 		Water = 0.8
 	},
-	MaterialFrequency = { -- right now this does nothing, but we are working on something in the background :) 
+	MaterialFrequency = { -- about time I got working on this. 
 	    	Plastic     = {Low=0.05, Mid=0.10, High=0.15},
     		ForceField  = {Low=0.02, Mid=0.03, High=0.04},
     		Concrete    = {Low=0.05, Mid=0.10, High=0.15},
@@ -362,6 +362,51 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	local function RandomDirection() -- makes random directions 🤯
 		local Direction = self._RandomSeed:NextUnitVector()
 		return Direction
+	end
+
+	local function CalculateFrequencyAbsorption(materialName: string, distance: number, temperature: number, humidity: number)
+	    local properties = SoundReverbV2.MaterialFrequency[materialName] or SoundReverbV2.MaterialFrequency.Plastic
+	    local tempFactor = 1 + (temperature - 20) * 0.01 -- temperature. 
+	    local humidityFactor = 1 - (humidity / 100) * 0.5 -- humidity
+	    local adjustedLow = properties.Low * tempFactor * humidityFactor
+	    local adjustedMid = properties.Mid * tempFactor * humidityFactor
+	    local adjustedHigh = properties.High * tempFactor * humidityFactor
+	
+	    local function calculateBandAbsorption(adjustedCoefficient: number, distance: number)
+	        local alpha = adjustedCoefficient
+	        local absorption = (1 - math.exp(-alpha * distance)) / (1 + alpha * distance)
+	        local frequencyAdjustment = 1 + (0.1 * (math.log10(distance + 1)))
+	        return absorption * frequencyAdjustment
+	    end
+	
+	    return {
+	        Low = calculateBandAbsorption(adjustedLow, distance),
+	        Mid = calculateBandAbsorption(adjustedMid, distance),
+	        High = calculateBandAbsorption(adjustedHigh, distance)
+	    }
+	end
+	
+	local function SimulateDiffusion(incidentDirection: Vector3, normal: Vector3, materialName: string)
+	    local properties = SoundReverbV2.MaterialReflectiveness[materialName] or SoundReverbV2.MaterialReflectiveness.Plastic
+	    local roughness = 0.1 -- i wonder what this does 🤔
+	
+	    local reflectedDirection = incidentDirection - (2 * incidentDirection:Dot(normal) * normal)
+	
+	    local function randomVectorInHemisphere(normal: Vector3)
+	        local u = math.random()
+	        local v = math.random()
+	        local theta = 2 * math.pi * u
+	        local phi = math.acos(2 * v - 1)
+	        local x = math.sin(phi) * math.cos(theta)
+	        local y = math.sin(phi) * math.sin(theta)
+	        local z = math.cos(phi)
+	        local randomVector = Vector3.new(x, y, z)
+	
+	        return (randomVector:Dot(normal) < 0) and -randomVector or randomVector
+	    end
+	
+	    local diffuseDirection = randomVectorInHemisphere(normal) * roughness
+	    return reflectedDirection:Lerp(diffuseDirection, properties)
 	end
 	local function Reflect(direction, normal) -- a way to handle reflection (recommend skipping over this because it's very long)
 		-- math math math it's just a whole bunch of math. I lost my mind trying to code this
