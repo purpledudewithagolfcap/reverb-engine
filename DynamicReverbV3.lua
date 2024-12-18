@@ -1,6 +1,6 @@
 --[[
 
-Author: Addison Cheesmond (formaly known as Purple Dude With A Golf Cap on Discord)
+Author: Purple Dude With A Golf Cap on Discord
 
 How long it took: like almost 2 months (still on-going)
 
