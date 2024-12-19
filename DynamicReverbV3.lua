@@ -202,7 +202,7 @@ local SoundReverbV2 = { -- self-explanitory
 		Water = 0.8
 	},
 	MaterialFrequency = { -- about time I got working on this. 
-	    	Plastic     = {Low=0.05, Mid=0.10, High=0.15},--the frequency in which the material absorbs from low to high. (i cant exactly find it easily so i just approximated the value)
+	    	Plastic     = {Low=0.05, Mid=0.10, High=0.15},--the frequency in which the material absorbs from low to high. (i can't exactly find it easily so I just approximated the value)
     		ForceField  = {Low=0.02, Mid=0.03, High=0.04},
     		Concrete    = {Low=0.05, Mid=0.10, High=0.15},
     		Glass       = {Low=0.02, Mid=0.03, High=0.04},
@@ -238,7 +238,7 @@ local SoundReverbV2 = { -- self-explanitory
 local ReverbObject = {}
 ReverbObject.__index = ReverbObject
 
-if RunService:IsServer() then -- cant be run on server side, why would you bruh
+if RunService:IsServer() then -- cant be run on the server side, why would you bruh
 	error("SoundReverbV2 can only be required on the client.")
 end
 
@@ -303,13 +303,13 @@ end
 function ReverbObject:_CreateRayVisual(Origin, Direction, Magnitude, Color, Transparency) -- debug [slop] (just read the functions name)
 	local self = self
 	Color = Color or Color3.new(0,1,0) -- flashy colors (don't try to edit this value, go into CastVisual and change it from there)
-	Transparency = Transparency or 0 -- opaque
+	Transparency = Transparency or 0 -- opaque or transparency 
 	local CastVisual = CastVisuals.new(Color, self._DebugFolder) 
 	CastVisual:Draw(Origin, Direction, Magnitude, Transparency)
 end
 
 function ReverbObject:_UpdateStep() -- where most of the juicy math and code stuff is contained inside.
-	local self=self
+	local self=self --its itself 🤯
 	local Filter = table.clone(self.FilterDescendantsInstances)
 
 	local function Normalize(Value, Min, Max) -- normalized so i don't get random ahh bugs
@@ -365,7 +365,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 		return Direction
 	end
 
-	local function CalculateFrequencyAbsorption(materialName: string, distance: number, temperature: number, humidity: number)
+	local function FrequencyAbsorption(materialName: string, distance: number, temperature: number, humidity: number) --IT DONE 😭
 	    local properties = SoundReverbV2.MaterialFrequency[materialName] or SoundReverbV2.MaterialFrequency.Plastic
 	    local tempFactor = 1 + (temperature - 20) * 0.01 -- temperature. 
 	    local humidityFactor = 1 - (humidity / 100) * 0.5 -- humidity.
@@ -387,7 +387,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	    }
 	end
 	
-	local function SimulateDiffusion(incidentDirection: Vector3, normal: Vector3, materialName: string)
+	local function Diffusion(incidentDirection: Vector3, normal: Vector3, materialName: string)
 	    local properties = SoundReverbV2.MaterialReflectiveness[materialName] or SoundReverbV2.MaterialReflectiveness.Plastic
 	    local roughness = 0.1 -- i wonder what this does 🤔. messing with this  value will make the rays more chaotic and unpredictable 
 	
@@ -412,7 +412,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 	local function Reflect(direction, normal) -- a way to handle reflection (recommend skipping over this because it's very long)
 		-- math math math it's just a whole bunch of math. I lost my mind trying to code this
 		-- Ultra-high precision arithmetic helper functions
-		local function arbitraryPrecisionAdd(a, b, precision) -- holy math
+		local function arbitraryPrecisionAdd(a, b, precision) -- Roblox please add arbitrary things soon. i actually hate doing this
 			local sum = a + b
 			local error = (a - sum) + b
 			for _ = 1, precision do
@@ -441,7 +441,6 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 			return r
 		end
 
-		-- Ultra-high precision normalization
 		local function ultraPreciseNormalize(v)
 			local x, y, z = v.X, v.Y, v.Z
 			local lengthSquared = arbitraryPrecisionAdd(
@@ -464,7 +463,6 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 			)
 		end
 
-		-- Kahan-Babuška-Neumaier summation for extended-precision dot product
 		local function extendedPrecisionDot(v1, v2)
 			local sum, c = 0, 0
 			local components = {"X", "Y", "Z"}
@@ -481,14 +479,11 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 			return arbitraryPrecisionAdd(sum, c, 100)
 		end
 
-		-- Normalize input vectors with ultra-high precision
 		direction = ultraPreciseNormalize(direction)
 		normal = ultraPreciseNormalize(normal)
 
-		-- Calculate dot product with extended precision
 		local dot = extendedPrecisionDot(direction, normal)
 
-		-- Clamp dot product with extended precision
 		local function extendedPrecisionClamp(value, min, max)
 			if value < min then return min end
 			if value > max then return max end
@@ -496,15 +491,13 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 		end
 		dot = extendedPrecisionClamp(dot, -1, 1)
 
-		-- Calculate reflection vector using arbitrary-precision arithmetic
 		local scale = arbitraryPrecisionMultiply(2, dot, 100)
 		local rx = arbitraryPrecisionAdd(direction.X, -arbitraryPrecisionMultiply(scale, normal.X, 100), 100)
 		local ry = arbitraryPrecisionAdd(direction.Y, -arbitraryPrecisionMultiply(scale, normal.Y, 100), 100)
 		local rz = arbitraryPrecisionAdd(direction.Z, -arbitraryPrecisionMultiply(scale, normal.Z, 100), 100)
-
 		local reflectedVector = Vector3.new(rx, ry, rz)
 
-		-- Apply Gram-Schmidt process with arbitrary-precision arithmetic
+		
 		local dotReflectedNormal = extendedPrecisionDot(reflectedVector, normal)
 		reflectedVector = Vector3.new(
 			arbitraryPrecisionAdd(reflectedVector.X, -arbitraryPrecisionMultiply(normal.X, dotReflectedNormal, 100), 100),
@@ -512,10 +505,8 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 			arbitraryPrecisionAdd(reflectedVector.Z, -arbitraryPrecisionMultiply(normal.Z, dotReflectedNormal, 100), 100)
 		)
 
-		-- Ensure output is normalized using ultra-high precision normalization
 		reflectedVector = ultraPreciseNormalize(reflectedVector)
 
-		-- Apply iterative correction with increased precision
 		for _ = 1, 50 do
 			local finalDot = extendedPrecisionDot(reflectedVector, normal)
 			if math.abs(finalDot) > 1e-100 then
@@ -529,7 +520,6 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 			end
 		end
 
-		-- Final validation using quaternion rotation
 		local function quaternionFromVectors(u, v)
 			local w = arbitraryPrecisionAdd(1, extendedPrecisionDot(u, v), 100)
 			local x = arbitraryPrecisionAdd(arbitraryPrecisionMultiply(u.Y, v.Z, 100), -arbitraryPrecisionMultiply(u.Z, v.Y, 100), 100)
@@ -538,8 +528,8 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 			return {w=w, x=x, y=y, z=z}
 		end
 
-		local function quaternionRotateVector(q, v) -- each dimension has to be calculated individually for their quaternion vector. im so [fricking] tired pleaee hepl
-			local qw, qx, qy, qz = q.w, q.x, q.y, q.z
+		local function quaternionRotateVector(q, v) -- each dimension has to be calculated individually for their quaternion vector. I'm so [fricking] tired Please help
+			local qw, qx, qy, qz = q.w, q.x, q.y, q.z -- please do not mess with this value otherwise your cooked and this code will not work at all
 			local x = arbitraryPrecisionAdd(
 				arbitraryPrecisionMultiply(arbitraryPrecisionAdd(1, -arbitraryPrecisionMultiply(2, arbitraryPrecisionAdd(arbitraryPrecisionMultiply(qy, qy, 100), arbitraryPrecisionMultiply(qz, qz, 100), 100), 100), 100), v.X, 100),
 				arbitraryPrecisionAdd(
@@ -580,7 +570,7 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 
 	local function ShootRay(Origin: Vector3, Direction: Vector3, Filter: {any}) -- actually starts firing the rays
 		local RaycastParam = RaycastParams.new()
-		RaycastParam.FilterType = Enum.RaycastFilterType.Exclude -- roblox please do not actually remove this function :sob: i need it plz (dw it wont break anything, its just im using this in my game and roblox is saying "its depercated"
+		RaycastParam.FilterType = Enum.RaycastFilterType.Exclude -- Roblox please do not actually remove this function :sob: i need it plz (dw it wont break anything, its just im using this in my game and roblox is saying "its depercated"
 		RaycastParam.FilterDescendantsInstances = Filter
 		local Raycast = workspace:Raycast(Origin, Direction*self._RayParams.MaxDistance, RaycastParam)
 		if Raycast then
@@ -665,8 +655,8 @@ function ReverbObject:_UpdateStep() -- where most of the juicy math and code stu
 
 
 
-	-- now here was my thought process. I wanted to design a truely endless and modular Reverb system that is 1: very accurate (if needed) and 2: the coder has control on what it wants.
-	-- thats why there is alot of over-engineered slop at the top because i want to see what i can get away with
+	-- now here was my thought process. I wanted to design a truly endless and modular Reverb system that is 1: very accurate (if needed) and 2: the coder has control over what it wants.
+	-- that's why there is a lot of over-engineered slop at the top because I want to see what I can get away with
 
 	local function DoRayLoop() -- after the engine starts, this line handles most of the logic on finding all of those ray results
 		local RaySample: SoundRayResult = {
