@@ -1,10 +1,11 @@
-# Real-time ray-traced audio enhancer (reverb system for short)
+# real-time Roblox reverb system
 Yeah honest to god I'll never do this shit again. 
+
   I've spent too much time on this, but here are some features.
   
 1: Late reflection and early reflection.
 
-2: An overly complex reflection system
+2: An overly complex reflection system (s
 
 3: absorption simulation
 
