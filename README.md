@@ -32,13 +32,11 @@ Yeah honest to god I'll never do this shit again.
 
 # Other features I haven't added but will be a thing soon:
 
-can't think of any yet
+can't think of any yet. But I'll see if I can find something maybe
 
-I would have added more features, but the school laptop blocks everything related to coding except this. They blocked most of the websites I researched to get these results. I'll add them here when i get on my actual pc AND also don't forget about it
+I would have added more features, but the school laptop blocks everything related to coding except this. They blocked most of the websites I researched to get these results. I'll add them here when i get on my actual pc also don't forget about it
 
-# "Why no code work?"
-
-Also if you're asking "Why does the code not work when I put it into ReplicatedStorage?" Well, I'm not just going to release the entire source code. there is another ModuleScript that I am not showing you. You can only inspect and see the code. Until I'm done with it I'm not going to release the code officially until later notice
-
+# PLEASE READ
+If you do use this code. it's optional but please credit me. I won't do anything but I'll love it
 
 
