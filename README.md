@@ -22,11 +22,17 @@ Yeah honest to god I'll never do this shit again.
 
 10: Takes into consideration the distance between rays and the impact point
 
-11: I can't name many other features right now, but they do exist if you're thinking of them.
+11: frequency-dependent absorption (some frequencies get absorbed better in different materials)
+
+12: Diffuse reflection (random reflection but more cooler)
+
+13: Room mode. (search it again)
+
+14: I can't name many other features, but they exist if you consider them.
 
 # Other features I haven't added but will be a thing soon:
 
-Diffuse reflection (search it up).
+can't think of any yet
 
 I would have added more features, but the school laptop blocks everything related to coding except this. They blocked most of the websites I researched to get these results. I'll add them here when i get on my actual pc AND also don't forget about it
 
