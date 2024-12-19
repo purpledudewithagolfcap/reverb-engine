@@ -129,11 +129,12 @@ How long it took: like almost 2 months (still on-going)
 	> ReverbObject.StepComplete: RBXScriptSignal -- Signal that you can connect to, fires every heartbeat AFTER everything has been applied.
 ]]
 
-local VersionNumber = 3 --I would have put like 2.5 but honestly it deserves a 3 for the amount of coding I did.
+local VersionNumber = 4? --I'm not certain if the modifications I done to the code would work since I'm writing the code on my school laptop
+			--and since my laptop dont have roblox im just hoping for the best that it works
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
-local CastVisuals = require(script.CastVisuals) --you need this scripts. idk why yall be asking like jesus
-local GoodSignal = require(script.GoodSignal) --you need this scripts. idk why yall be asking like jesus
+local CastVisuals = require(script.CastVisuals) --you need this scripts. IDK why all are asking like Jesus
+local GoodSignal = require(script.GoodSignal) --you need these scripts. IDK why yall are asking like Jesus
 
 local SoundReverbV2 = { -- self-explanitory 
 	MaterialDensity = {-- now the materials are educated guesses. I tried to base every material to the real world so
